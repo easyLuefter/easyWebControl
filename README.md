@@ -1,2 +1,4 @@
 # easyWebControl
-webControl for raspberry pi. Mainly PHP files.
+webControl running on raspberry pi.
+
+copy files to proc directory
