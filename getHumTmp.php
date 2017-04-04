@@ -32,13 +32,10 @@ include "const.php";
 include "locals/mySqlConnect.php";
 include "makeChartIncl.php";
 include "locals/localInclude.php";
-$dht22List = array(24,25,27,28);
 
 //**************************
 //* include functions
 //**************************
-
-//include "makeChartIncl.php";
 include "easyLib.php";
 
 
