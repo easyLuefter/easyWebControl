@@ -784,9 +784,9 @@ fclose($myfile);
 	
 	
 	echo '
-	<tr><td>
+	<tr><td></td><td><br />
 		<form action="config2.php" method="post">
-			<button type="submit" name="button" value="update2">update</button>		
+			<button type="submit" name="button" value="update2">Software update</button>		
 		</form>
 	</td></tr>';
 
@@ -798,23 +798,6 @@ fclose($myfile);
 	echo '
 	<p><a href="main.php">Startseite</a>&nbsp;&nbsp;<a href="mesures.php">Messwerte</a>&nbsp;&nbsp;<a href="config.php">zurück zu Konfiguration</a></p>
 	';
-	//echo '
-	//<p><a href="download2.php?fileName=' . $fileName . '">Konfigurationsdaten in File sichern</a>
-	//&nbsp;&nbsp;<a href="config2.php?import=1">Konfigurationsdaten wiederherstellen</a></p>
-	//';
-	//echo $msg;
-	/*
-	if (isset($_GET['import'])) {
-		echo '
-		<form action="config2.php" method="post" enctype="multipart/form-data">
-			Konfigurations-File:<br />
-		    <input type="file" name="fileToUpload" size="60" id="fileToUploadId" accept="*.txt">
-	    <p>
-		    <button type="submit" name="Import" value="">Wiederherstellen starten</button> (Dauer ca. 10 Sekunden)
-		    </p>
-		</form>
-		';
-	} */
    
 ?>
 
