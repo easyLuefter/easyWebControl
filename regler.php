@@ -150,6 +150,7 @@ $loopInterval = 5;	// 5 secs
 
 $time = time();
 $Ddelta1 = 0;
+$deltaL = 0;
 $State = $Idelta = 0;
 $WrSoll = wrSollCalc($totSpeed);
 $wrSollCalcTime = time();
@@ -208,14 +209,14 @@ while ($doWork == TRUE) {
 		$init_t_1 = TRUE;
 	} else {
 		$diffTemp = abs($mesures['Abluft'] - $mesures['Aussenluft']);
-		if ($diffTemp < 1) {	 			//  if diff-temperature < 0.2Â° --> no WR-reg
-			if ($echo) echo sprintf("diffTemp: %.3f < 1Â° --> no WR-reg\n", $diffTemp);
+		if ($diffTemp < 1) {	 			//  if diff-temperature < 0.2° --> no WR-reg
+			if ($echo) echo sprintf("diffTemp: %.3f < 1° --> no WR-reg\n", $diffTemp);
 			$delta = 0;
 			if ($echo) echo sprintf("--> delta forced to 0\n");
 			$Dcomponent = 0;
 			$init_t_1 = TRUE;
-		} else { // diff-temperature >= 1Â° --> do WR-reg
-			if ($echo) echo sprintf("diffTemp: %.3f >= 1Â° --> does WR-reg\n", $diffTemp);
+		} else { // diff-temperature >= 1° --> do WR-reg
+			if ($echo) echo sprintf("diffTemp: %.3f >= 1° --> does WR-reg\n", $diffTemp);
 			
 			// berechne ist-Wirkungsgrad
 			$WrIst = 		($mesures['Zuluft'] - $mesures['Aussenluft']) / ($mesures['Abluft'] - $mesures['Aussenluft']);
@@ -241,11 +242,11 @@ while ($doWork == TRUE) {
 		if ($init_t_1) {$delta_1 = $delta; $init_t_1 = FALSE;} // setzen von $delta_1 beim ersten Schlaufendurchgang
 		$Ddelta = $delta - $delta_1;
 		//echo sprintf("Ddelta: %.5f\n", $Ddelta);
-		$delta_1 = $delta;	// setzen von $delta_1 fÃ¼r den nÃ¤chsten Schlaufendurchgang
+		$delta_1 = $delta;	// setzen von $delta_1 für den nächsten Schlaufendurchgang
 		//$Ddelta1 = $Ddelta * $config['Dvalue'] * 72000 * $timeFactor; 	
 		$Ddelta1 = $Ddelta * $config['Dvalue'] * 120000 * $timeFactor; 	
-		//$Ddelta2 = 								 -8 * $Dcomponent * $timeFactor; 	// Wirkung Ã¼ber ca. $timeConst (sec)
-		$Ddelta2 = 								-12 * $Dcomponent * $timeFactor; 	// Wirkung Ã¼ber ca. timeConst (sec)
+		//$Ddelta2 = 								 -8 * $Dcomponent * $timeFactor; 	// Wirkung über ca. $timeConst (sec)
+		$Ddelta2 = 								-12 * $Dcomponent * $timeFactor; 	// Wirkung über ca. timeConst (sec)
 		$Dcomponent+= $Ddelta1 + $Ddelta2;
 		if ($Dcomponent > 20) $Dcomponent = 20;		// limit Dcomponent
 		if ($Dcomponent < -20) $Dcomponent = -20;
@@ -257,13 +258,13 @@ while ($doWork == TRUE) {
 		if ($Ddelta * $delta > 0) {	// delta und Dcomponent zeigen in gleiche Richtung
 			$Case = sprintf("Beschleunigung");
 		} else if ($Ddelta * $delta < 0) {
-			$Case = sprintf("VerzÃ¶gerung");
+			$Case = sprintf("Verzögerung");
 		}	
 		//$Idelta1 = $Ddelta * $config['DIvalue'] * 32000 * $timeFactor;
 		$Idelta1 = $Ddelta * $config['DIvalue'] * 50000 * $timeFactor;
 			
 		// Integral Component
-		$Case = sprintf("%s + mÃ¤ssige Beschleunigung", $Case);
+		$Case = sprintf("%s + mässige Beschleunigung", $Case);
 		//$Idelta2 = $deltaL  * $config['Ivalue'] * 400 * $timeFactor;
 		$Idelta2 = $deltaL  * $config['Ivalue'] * 600 * $timeFactor;
 		
@@ -290,7 +291,7 @@ while ($doWork == TRUE) {
 
 	shell_exec("/usr/bin/php $path/chkTimers.php &");
 	echo shell_exec("/usr/bin/php $path/updateSpeed.php &");
-
+	
 	// bestimme soll-Wirkungsgrad
 	if ($wrSollCalcTime <= time()) {
 		$wrSollCalcTime = time() + 10*60; // interval 10 Min

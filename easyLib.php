@@ -69,8 +69,8 @@ function createAndInitTables() {
 	
 	// variables table (MEMORY)
 	$tblName = $tableName_vars;
-	$sql = "DROP TABLE IF EXISTS easyLuefter.$tblName";
-	mysql_query($sql);
+	//$sql = "DROP TABLE IF EXISTS easyLuefter.$tblName";
+	//mysql_query($sql);
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
 	  `vars` int(11) DEFAULT 0,
 	  `setSpeed` int(11) DEFAULT 0,
@@ -98,7 +98,7 @@ function createAndInitTables() {
 	//echo $sql . "\n";
 	mysql_query($sql);
 	$sql = 'ALTER TABLE `' . $tblName . '` 
-	  ADD PRIMARY KEY (`vars`)';
+	  ADD PRIMARY KEY (`timeStamp`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
 	mysql_query("INSERT INTO $tblName (vars) VALUES(1)");	
@@ -168,9 +168,9 @@ function createAndInitTables() {
 	$tblName = $tableName_config;
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
 	  `config` int(11) NOT NULL DEFAULT 0,
-	  `Mode` varchar(3) NOT NULL DEFAULT 0,
-	  `lastMode` varchar(3) NOT NULL DEFAULT 0,
-	  `FTRmode` varchar(5) NOT NULL DEFAULT 0,
+	  `Mode` varchar(3) NOT NULL DEFAULT "MAN",
+	  `lastMode` varchar(3) NOT NULL DEFAULT "MAN",
+	  `FTRmode` varchar(5) NOT NULL DEFAULT "     ",
 	  `manSoll` int(11) NOT NULL DEFAULT 0,
 	  `tmrNr` int(11) NOT NULL DEFAULT 0,
 	  `tmrSpeed` int(11) NOT NULL DEFAULT 0,
@@ -202,9 +202,17 @@ function createAndInitTables() {
 	  ADD PRIMARY KEY (`config`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
-	mysql_query("INSERT INTO $tblName (config) VALUES(1)");	
-	//mysql_query("UPDATE $tblName SET `SWversion` = '1.007' WHERE `$tableName_config`.`config` = 1");
-	
+	mysql_query('INSERT INTO ' . $tblName . ' (
+			config,
+			Mode,	manSoll,	tmrNr, 	tmrSpeed,	minTimerInterval,	maxTimerInterval,	minLLAbluft,	minLLZuluft,	maxLLAbluft,	maxLLZuluft,
+			sym, 	Pvalue,		Ivalue,	Dvalue,		DIvalue,	timeConst
+		) VALUES (
+			1,
+			"MAN",	60, 		2,		30,			11,					2,					10,				10,				100,			100,
+			1,		0.6,		0.4,	0, 			0, 			420
+		)
+	');	
+
 	
 	// humidity functions config table (if not exist)
 	$tblName = $tableName_hum;
@@ -244,7 +252,26 @@ function createAndInitTables() {
 	  ADD PRIMARY KEY (`hum`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
-	mysql_query("INSERT INTO $tblName (hum) VALUES(1)");	
+	mysql_query('INSERT INTO ' . $tblName . ' (hum, 
+			FSavCount1, FSgap1,				FSincL1,		FSmaxPosOffset1, FS1n,
+			FSavCount2, FSgap2,				FSincL2,		FSmaxPosOffset2,
+			ASpercent,  ASmaxRH,			ASposOffset,	ASnegOffset,
+	  		RHmax, 		RHmaxPosOffset, 	RHmaxNegOffset,
+	  		RHmin, 		RHminPosOffset, 	RHminNegOffset,
+	  		tempMin, 	tempMinPosOffset,	tempMinNegOffset,
+	  		tempMax, 	tempMaxPosOffset,	tempMaxNegOffset,
+			enfMaxPosOffset, enfN
+		) VALUES(1,
+			3,			0.5,				10,				30,              45,
+			3,          5,					10,				0,
+			70,         80,					20,				-20,
+			60,         30,					-20,
+			40,         0,					0,
+			24,         0,					0,
+			17,         0,					0,
+			30,			120
+		)
+	');	
 	
 	
 	// timer functions config table (if not exist)
@@ -294,20 +321,45 @@ function createAndInitTables() {
 }
 
 
+// ftp_sync - Copy directory and file structure 
+function ftp_sync($conn_id, $dir) {
+
+	if ($dir != ".") {
+		if (ftp_chdir($conn_id, $dir) == false) {
+			echo ("Change $dir Failed: $dir<br />\n");
+			return;
+		}
+		if (!(is_dir($dir))) mkdir($dir);
+		chdir ($dir);
+	}
+	$contents = ftp_nlist($conn_id, ".");
+	foreach ($contents as $file) {
+		if ($file == '.' || $file == '..') continue;
+		if (@ftp_chdir($conn_id, $file)) {
+			ftp_chdir ($conn_id, "..");
+			ftp_sync ($conn_id, $file);
+		}
+		else ftp_get($conn_id, $file, $file, FTP_BINARY);
+	}
+	ftp_chdir ($conn_id, "..");
+	chdir ("..");
+}
+
+
 function calcAH($T,$r) {
 
 	/* Magnus Formel
 	r = relative Luftfeuchte
-	T = Temperatur in Â°C
+	T = Temperatur in °C
 	TK = Temperatur in Kelvin (TK = T + 273.15)
-	TD = Taupunkttemperatur in Â°C
+	TD = Taupunkttemperatur in °C
 	DD = Dampfdruck in hPa
-	SDD = SÃ¤ttigungsdampfdruck in hPa
+	SDD = Sättigungsdampfdruck in hPa
 	
 	Parameter:
-	a = 7.5, b = 237.3 fÃ¼r T >= 0
-	a = 7.6, b = 240.7 fÃ¼r T < 0 Ã¼ber Wasser (Taupunkt)
-	a = 9.5, b = 265.5 fÃ¼r T < 0 Ã¼ber Eis (Frostpunkt)
+	a = 7.5, b = 237.3 für T >= 0
+	a = 7.6, b = 240.7 für T < 0 über Wasser (Taupunkt)
+	a = 9.5, b = 265.5 für T < 0 über Eis (Frostpunkt)
 	
 	R* = 8314.3 J/(kmol*K) (universelle Gaskonstante)
 	mw = 18.016 kg/kmol (Molekulargewicht des Wasserdampfes)
@@ -320,10 +372,11 @@ function calcAH($T,$r) {
 	4.TD(r,T) = b*v/(a-v) mit v(r,T) = log10(DD(r,T)/6.1078)
 	5.AF(r,TK) = 10^5 * mw/R* * DD(r,T)/TK; AF(TD,TK) = 10^5 * mw/R* * SDD(TD)/TK
 	*/
+	
 	if ($T >= 0 ) {
 		$a = 7.5;
 		$b = 237.3;
-	} else { // bei Temp unter Null und Ã¼ber Wasser
+	} else { // bei Temp unter Null und über Wasser
     	$a = 7.6; 
     	$b = 240.7;
     }

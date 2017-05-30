@@ -32,6 +32,7 @@ include "const.php";
 include "locals/mySqlConnect.php";
 include "makeChartIncl.php";
 include "locals/localInclude.php";
+$dht22List = array(24,25,27,28);
 
 //**************************
 //* include functions
@@ -57,23 +58,20 @@ include "versionControl.php";
 
 echo date("d.m.Y H:i:s") . " $PHPname started\n";
 
-//exec("php $path/updateSpeed.php");	// set pwm to actual Speed
-
 // prepare tmp/easyWebCharts directory and easyWebChart.jpg file with read/write access to all
 $old_umask = umask(0);
+if (!file_exists("easyWebCharts")) mkdir("easyWebCharts", 0777);
+if (!file_exists("easyWebCharts/archiv")) mkdir("easyWebCharts/archiv", 0777);
 if (!file_exists("/tmp/easyWebCharts")) mkdir("/tmp/easyWebCharts", 0777);
 file_put_contents ("/tmp/easyWebCharts/easyWebChart.jpg", "dummy");
 chmod("/tmp/easyWebCharts/easyWebChart.jpg",0666);
+if (!file_exists("easyWebCharts/easyWebChart.jpg")) shell_exec("sudo ln -s /tmp/easyWebCharts/easyWebChart.jpg easyWebCharts/easyWebChart.jpg");
 umask($old_umask);
-
-// create record in tableName_vars (MEMORY) if not exists
-//mysql_query("INSERT INTO $tableName_vars (vars) VALUES (1)");
 
 // init archive-timer
 $copyDailyChartTime = intval(DateTime::createFromFormat("Y.m.j H:i", date("Y.m.d ") . "20:00")->getTimestamp());
 if ($copyDailyChartTime <= time()) $copyDailyChartTime = strtotime("+1 day", $copyDailyChartTime);
 echo "next copyDailyChartTime: " . date("Y.m.d H:i:s", $copyDailyChartTime) . "\n";
-
 
 $fAbfuhr = $fRueckg = $fKond = $fRueckgg = 0;
 $wtime = time()+3;
@@ -87,23 +85,7 @@ while ($doWork == TRUE) {
 	$dateTime = date("Ymd_Hi",$time);
 	$hourOfDay = date("H",$time);
 
-	/*$mesuresOK = 0;
-	for ($i=0; $i<4; $i++) { 
-		if ($reply = shell_exec("sudo /home/pi/lol_dht22/loldht " . $dht22List[$i] . " 5 | grep Humidity")) {
-			echo "$dht22List[$i]: $reply";
-			if (preg_match('/^Humidity = ([0-9\.]+) % Temperature = ([0-9\.]+) \*C/', $reply, $m) == 1) { 
-				$Hum[$i] = floatval($m[1]); 
-				$Tmp[$i] = floatval($m[2]); 
-				if ($Hum[$i] <  10) break;
-				if ($Hum[$i] > 100) break;
-				if ($Tmp[$i] > 60) break;
-				if ($Tmp[$i] < -30) break;
-				$mesuresOK++; 
-			}
-		}
-	} */
-	//$reply = shell_exec("sudo /home/pi/lol_dht22/loldht");
-	$reply = shell_exec("sudo $path/dht22/loldht");
+	$reply = shell_exec("sudo $path/dht22/easydht");
 	$valueTable = explode("\n", trim($reply,"\n"));
 	echo "valueTable: "; print_r($valueTable); echo "\n";	
 
@@ -242,16 +224,16 @@ while ($doWork == TRUE) {
 				$copyDailyChartTime = strtotime("+1 day", $copyDailyChartTime);
 				$rslt = mysql_query("SELECT * FROM $tableName_chartOpt WHERE chartOpt = 1");
 				$chartOpt = mysql_fetch_assoc($rslt);	
-				makeChart("easyLüfter", "$path/easyWebChart/archiv", 4, $chartOpt['YScale'], $chartOpt['tempOffset'], date("d.m.Y 20:00"), date("_Ymd_2000") ); 		
+				makeChart("easyLüfter", "$path/easyWebCharts/archiv", 4, $chartOpt['YScale'], $chartOpt['tempOffset'], date("d.m.Y 20:00"), date("_Ymd_2000") ); 		
 			}
 
-			//copy Chart to bananapi
+			//copy Chart to server (optional)
 			if (function_exists("copyChartToServer")) {			
 				if ($cpToServerTime <= time()) {
 					$cpToServerTime = time() + 10*60;
 					$rslt = mysql_query("SELECT * FROM $tableName_chartOpt WHERE chartOpt = 1");
 					$chartOpt = mysql_fetch_assoc($rslt);	
-					makeChart("easyLüfter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
+					makeChart("easyüfter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
 					copyChartToServer();
 				}
 			}
