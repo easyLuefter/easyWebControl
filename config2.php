@@ -166,6 +166,10 @@ if (count($_POST) > 0) {
 			} else {
 				$message.= date("d.m.Y H:i:s") . " ftp_connect($ftp_server1) failed\n";
 			}
+		} else if ($_POST['button'] == "update2") {
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git temp");
+			exec("cp temp/main.php .");
+			exec("cp temp/versionControl.php .");
 		}
 	} else if (isset($_POST['conf'])) {
 		$lLimit = -10;
@@ -781,7 +785,7 @@ fclose($myfile);
 	echo '
 	<tr><td>
 		<form action="config2.php" method="post">
-			<button type="submit" name="button" value="update">update</button>		
+			<button type="submit" name="button" value="update2">update</button>		
 		</form>
 	</td></tr>';
 
@@ -798,7 +802,7 @@ fclose($myfile);
 	//&nbsp;&nbsp;<a href="config2.php?import=1">Konfigurationsdaten wiederherstellen</a></p>
 	//';
 	//echo $msg;
-
+	/*
 	if (isset($_GET['import'])) {
 		echo '
 		<form action="config2.php" method="post" enctype="multipart/form-data">
@@ -809,7 +813,7 @@ fclose($myfile);
 		    </p>
 		</form>
 		';
-	}
+	} */
    
 ?>
 
