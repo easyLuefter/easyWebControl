@@ -167,9 +167,10 @@ if (count($_POST) > 0) {
 				$message.= date("d.m.Y H:i:s") . " ftp_connect($ftp_server1) failed\n";
 			}
 		} else if ($_POST['button'] == "update2") {
-			exec("git clone https://github.com/easyLuefter/easyWebControl.git temp");
-			exec("cp temp/main.php .");
-			exec("cp temp/versionControl.php .");
+			exec("rm -fr easyControlPi");
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
+			exec("cp easyControlPi/* .");
+			exec("cp -r easyControlPi/dht22 .");
 		}
 	} else if (isset($_POST['conf'])) {
 		$lLimit = -10;
