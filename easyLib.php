@@ -167,7 +167,7 @@ function createAndInitTables() {
 	$tblName = $tableName_config;
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
 	  `config` int(11) NOT NULL DEFAULT 1,
-	  `SWversion` float NOT NULL DEFAULT 1.008,
+	  `SWversion` float NOT NULL DEFAULT 1.009,
 	  `Mode` varchar(3) NOT NULL DEFAULT "MAN",
 	  `lastMode` varchar(3) NOT NULL DEFAULT "MAN",
 	  `FTRmode` varchar(5) NOT NULL DEFAULT "     ",
