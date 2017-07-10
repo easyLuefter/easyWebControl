@@ -627,7 +627,7 @@ fclose($myfile);
 	</form></td></tr>';
 
 	// Regler
-	echo '<tr><td>Regler</td><td><br />P</td><td><br />I</td><td><br />D</td><td><br />DI</td></tr>
+	echo '<tr><td>Regler</td><td><br />P</td><td><br />I</td><td><br />D</td></tr>
 	<tr><form action="config2.php" method="post">
 		<input type="hidden" name="conf" value="SET" />
 		<input type="hidden" name="lLimit" value="0" />
@@ -636,7 +636,6 @@ fclose($myfile);
 		<td><input type="text" size="2" value="' . $config['Pvalue']  . '" name="Pvalue"></td>
 		<td><input type="text" size="2" value="' . $config['Ivalue']  . '" name="Ivalue"></td>
 		<td><input type="text" size="2" value="' . $config['Dvalue']  . '" name="Dvalue"></td>
-		<td><input type="text" size="2" value="' . $config['DIvalue'] . '" name="DIvalue"></td>
 		<td><input type="submit" value="speichern"></td>
 	</form></tr>
 	<tr><form action="config2.php" method="post">
@@ -645,7 +644,7 @@ fclose($myfile);
 		<input type="hidden" name="uLimit" value="1200" />
 		<td></td><td>Zeitkonstante:</td>
 		<td><input type="text" size="2" value="' . $config['timeConst'] . '" name="timeConst"> Sek</td><td></td>
-		<td></td><td><input type="submit" value="speichern"></td>
+		<td><input type="submit" value="speichern"></td>
 	</form></tr>';
 
 

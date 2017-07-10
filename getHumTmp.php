@@ -236,7 +236,7 @@ while ($doWork == TRUE) {
 					$cpToServerTime = time() + 10*60;
 					$rslt = mysql_query("SELECT * FROM $tableName_chartOpt WHERE chartOpt = 1");
 					$chartOpt = mysql_fetch_assoc($rslt);	
-					makeChart("easyLÃ¼fter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
+					makeChart("easyLüfter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
 					copyChartToServer();
 				}
 			}
