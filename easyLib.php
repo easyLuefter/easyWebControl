@@ -1,6 +1,5 @@
 <?php
 
-
 function createAndInitTables() {
 
 	include "locals/locals.php";
@@ -73,8 +72,8 @@ function createAndInitTables() {
 	//mysql_query($sql);
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
 	  `vars` int(11) DEFAULT 0,
-	  `setSpeed` int(11) DEFAULT 0,
-	  `totSpeed` int(11) DEFAULT 0,
+	  `setSpeed` int(11) DEFAULT 30,
+	  `totSpeed` int(11) DEFAULT 30,
 	  `minMaxTimer` int(11) DEFAULT 0,
 	  `LuefterleistungAbluft` int(11) DEFAULT 0,
 	  `LuefterleistungZuluft` int(11) DEFAULT 0,
@@ -98,7 +97,7 @@ function createAndInitTables() {
 	//echo $sql . "\n";
 	mysql_query($sql);
 	$sql = 'ALTER TABLE `' . $tblName . '` 
-	  ADD PRIMARY KEY (`timeStamp`)';
+	  ADD PRIMARY KEY (`vars`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
 	mysql_query("INSERT INTO $tblName (vars) VALUES(1)");	
@@ -142,10 +141,10 @@ function createAndInitTables() {
 	// chart options table (if not exist)
 	$tblName = $tableName_chartOpt;
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
-	  `chartOpt` int(11) NOT NULL DEFAULT 0,
-	  `XScale` int(11) NOT NULL DEFAULT 0,
-	  `YScale` int(11) NOT NULL DEFAULT 0,
-	  `tempOffset` int(11) NOT NULL DEFAULT 0,
+	  `chartOpt` int(11) NOT NULL DEFAULT 1,
+	  `XScale` int(11) NOT NULL DEFAULT 4,
+	  `YScale` int(11) NOT NULL DEFAULT 5,
+	  `tempOffset` int(11) NOT NULL DEFAULT 5,
 	  `leistung` int(10) NOT NULL DEFAULT 0,
 	  `leistungAbluft` int(10) NOT NULL DEFAULT 0,
 	  `waermeRueckgew` int(11) NOT NULL DEFAULT 0,
@@ -167,19 +166,20 @@ function createAndInitTables() {
 	// config table (if not exist)
 	$tblName = $tableName_config;
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
-	  `config` int(11) NOT NULL DEFAULT 0,
+	  `config` int(11) NOT NULL DEFAULT 1,
+	  `SWversion` float NOT NULL DEFAULT 1.008,
 	  `Mode` varchar(3) NOT NULL DEFAULT "MAN",
 	  `lastMode` varchar(3) NOT NULL DEFAULT "MAN",
 	  `FTRmode` varchar(5) NOT NULL DEFAULT "     ",
-	  `manSoll` int(11) NOT NULL DEFAULT 0,
-	  `tmrNr` int(11) NOT NULL DEFAULT 0,
-	  `tmrSpeed` int(11) NOT NULL DEFAULT 0,
-	  `minTimerInterval` int(11) NOT NULL DEFAULT 0,
-	  `maxTimerInterval` int(11) NOT NULL DEFAULT 0,
-	  `minLLAbluft` int(11) NOT NULL DEFAULT 0,
-	  `minLLZuluft` int(11) NOT NULL DEFAULT 0,
-	  `maxLLAbluft` int(11) NOT NULL DEFAULT 0,
-	  `maxLLZuluft` int(11) NOT NULL DEFAULT 0,
+	  `manSoll` int(11) NOT NULL DEFAULT 40,
+	  `tmrNr` int(11) NOT NULL DEFAULT 2,
+	  `tmrSpeed` int(11) NOT NULL DEFAULT 30,
+	  `minTimerInterval` int(11) NOT NULL DEFAULT 11,
+	  `maxTimerInterval` int(11) NOT NULL DEFAULT 2,
+	  `minLLAbluft` int(11) NOT NULL DEFAULT 10,
+	  `minLLZuluft` int(11) NOT NULL DEFAULT 10,
+	  `maxLLAbluft` int(11) NOT NULL DEFAULT 100,
+	  `maxLLZuluft` int(11) NOT NULL DEFAULT 100,
 	  `tempCal1` float NOT NULL DEFAULT 0,
 	  `tempCal2` float NOT NULL DEFAULT 0,
 	  `tempCal3` float NOT NULL DEFAULT 0,
@@ -188,12 +188,12 @@ function createAndInitTables() {
 	  `RHCal2` float NOT NULL DEFAULT 0,
 	  `RHCal3` float NOT NULL DEFAULT 0,
 	  `RHCal4` float NOT NULL DEFAULT 0,
-	  `sym` int(11) NOT NULL DEFAULT 0,
+	  `sym` int(11) NOT NULL DEFAULT 1,
 	  `uSym` int(11) NOT NULL DEFAULT 0,
-	  `Pvalue` float NOT NULL DEFAULT 0,
-	  `Ivalue` float NOT NULL DEFAULT 0,
+	  `Pvalue` float NOT NULL DEFAULT 0.6,
+	  `Ivalue` float NOT NULL DEFAULT 0.4,
 	  `Dvalue` float NOT NULL DEFAULT 0,
-	  `timeConst` int(11) NOT NULL DEFAULT 0,
+	  `timeConst` int(11) NOT NULL DEFAULT 420,
 	  `Icomponent` float NOT NULL DEFAULT 0
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;';
 	//echo $sql . "\n";
@@ -202,49 +202,40 @@ function createAndInitTables() {
 	  ADD PRIMARY KEY (`config`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
-	mysql_query('INSERT INTO ' . $tblName . ' (
-			config,
-			Mode,	manSoll,	tmrNr, 	tmrSpeed,	minTimerInterval,	maxTimerInterval,	minLLAbluft,	minLLZuluft,	maxLLAbluft,	maxLLZuluft,
-			sym, 	Pvalue,		Ivalue,	Dvalue,		DIvalue,	timeConst
-		) VALUES (
-			1,
-			"MAN",	60, 		2,		30,			11,					2,					10,				10,				100,			100,
-			1,		0.6,		0.4,	0, 			0, 			420
-		)
-	');	
+	mysql_query('INSERT INTO ' . $tblName . ' (config) VALUES (1)');	
 
 	
 	// humidity functions config table (if not exist)
 	$tblName = $tableName_hum;
 	$sql = 'CREATE TABLE IF NOT EXISTS `' . $tblName . '` (
-	  `hum` int(11) NOT NULL DEFAULT 0,
-	  `FSavCount1` int(11) NOT NULL DEFAULT 0,
-	  `FSgap1` float NOT NULL DEFAULT 0,
-	  `FSincL1` int(11) NOT NULL DEFAULT 0,
-	  `FSmaxPosOffset1` int(11) NOT NULL DEFAULT 0,
-	  `FS1n` int(11) NOT NULL DEFAULT 0,
-	  `FSavCount2` int(11) NOT NULL DEFAULT 0,
-	  `FSgap2` float NOT NULL DEFAULT 0,
-	  `FSincL2` int(11) NOT NULL DEFAULT 0,
+	  `hum` int(11) NOT NULL DEFAULT 1,
+	  `FSavCount1` int(11) NOT NULL DEFAULT 3,
+	  `FSgap1` float NOT NULL DEFAULT 0.5,
+	  `FSincL1` int(11) NOT NULL DEFAULT 10,
+	  `FSmaxPosOffset1` int(11) NOT NULL DEFAULT 30,
+	  `FS1n` int(11) NOT NULL DEFAULT 45,
+	  `FSavCount2` int(11) NOT NULL DEFAULT 3,
+	  `FSgap2` float NOT NULL DEFAULT 5,
+	  `FSincL2` int(11) NOT NULL DEFAULT 10,
 	  `FSmaxPosOffset2` int(11) NOT NULL DEFAULT 0,
-	  `ASpercent` int(11) NOT NULL DEFAULT 0,
-	  `ASmaxRH` float NOT NULL DEFAULT 0,
-	  `ASposOffset` int(11) NOT NULL DEFAULT 0,
-	  `ASnegOffset` int(11) NOT NULL DEFAULT 0,
-	  `RHmax` int(11) NOT NULL DEFAULT 0,
-	  `RHmaxPosOffset` int(11) NOT NULL DEFAULT 0,
-	  `RHmaxNegOffset` int(11) NOT NULL DEFAULT 0,
-	  `RHmin` int(11) NOT NULL DEFAULT 0,
+	  `ASpercent` int(11) NOT NULL DEFAULT 70,
+	  `ASmaxRH` float NOT NULL DEFAULT 80,
+	  `ASposOffset` int(11) NOT NULL DEFAULT 20,
+	  `ASnegOffset` int(11) NOT NULL DEFAULT -20,
+	  `RHmax` int(11) NOT NULL DEFAULT 60,
+	  `RHmaxPosOffset` int(11) NOT NULL DEFAULT 30,
+	  `RHmaxNegOffset` int(11) NOT NULL DEFAULT -20,
+	  `RHmin` int(11) NOT NULL DEFAULT 40,
 	  `RHminPosOffset` int(11) NOT NULL DEFAULT 0,
 	  `RHminNegOffset` int(11) NOT NULL DEFAULT 0,
-	  `tempMax` float NOT NULL DEFAULT 0,
+	  `tempMax` float NOT NULL DEFAULT 24,
 	  `tempMaxPosOffset` int(11) NOT NULL DEFAULT 0,
 	  `tempMaxNegOffset` int(11) NOT NULL DEFAULT 0,
-	  `tempMin` float NOT NULL DEFAULT 0,
+	  `tempMin` float NOT NULL DEFAULT 17,
 	  `tempMinPosOffset` int(11) NOT NULL DEFAULT 0,
 	  `tempMinNegOffset` int(11) NOT NULL DEFAULT 0,
-	  `enfMaxPosOffset` int(11) NOT NULL DEFAULT 0,
-	  `enfN` int(11) NOT NULL DEFAULT 0
+	  `enfMaxPosOffset` int(11) NOT NULL DEFAULT 30,
+	  `enfN` int(11) NOT NULL DEFAULT 120
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;';
 	//echo $sql . "\n";
 	mysql_query($sql);
@@ -252,26 +243,7 @@ function createAndInitTables() {
 	  ADD PRIMARY KEY (`hum`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
-	mysql_query('INSERT INTO ' . $tblName . ' (hum, 
-			FSavCount1, FSgap1,				FSincL1,		FSmaxPosOffset1, FS1n,
-			FSavCount2, FSgap2,				FSincL2,		FSmaxPosOffset2,
-			ASpercent,  ASmaxRH,			ASposOffset,	ASnegOffset,
-	  		RHmax, 		RHmaxPosOffset, 	RHmaxNegOffset,
-	  		RHmin, 		RHminPosOffset, 	RHminNegOffset,
-	  		tempMin, 	tempMinPosOffset,	tempMinNegOffset,
-	  		tempMax, 	tempMaxPosOffset,	tempMaxNegOffset,
-			enfMaxPosOffset, enfN
-		) VALUES(1,
-			3,			0.5,				10,				30,              45,
-			3,          5,					10,				0,
-			70,         80,					20,				-20,
-			60,         30,					-20,
-			40,         0,					0,
-			24,         0,					0,
-			17,         0,					0,
-			30,			120
-		)
-	');	
+	mysql_query('INSERT INTO ' . $tblName . ' (hum) VALUES(1)');	
 	
 	
 	// timer functions config table (if not exist)
@@ -316,8 +288,7 @@ function createAndInitTables() {
 	  ADD PRIMARY KEY (`fanControl`)';
 	//echo $sql . "\n";
 	mysql_query($sql);
-	mysql_query("INSERT INTO $tblName (fanControl) VALUES(1)");	
-	
+	mysql_query("INSERT INTO $tblName (fanControl) VALUES(1)");		
 }
 
 

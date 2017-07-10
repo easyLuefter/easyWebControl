@@ -37,6 +37,8 @@ $dht22List = array(24,25,27,28);
 //**************************
 //* include functions
 //**************************
+
+//include "makeChartIncl.php";
 include "easyLib.php";
 
 
@@ -61,7 +63,7 @@ echo date("d.m.Y H:i:s") . " $PHPname started\n";
 // prepare tmp/easyWebCharts directory and easyWebChart.jpg file with read/write access to all
 $old_umask = umask(0);
 if (!file_exists("easyWebCharts")) mkdir("easyWebCharts", 0777);
-if (!file_exists("easyWebCharts/archiv")) mkdir("easyWebCharts/archiv", 0777);
+if (!file_exists("easyWebCharts/archive")) mkdir("easyWebCharts/archive", 0777);
 if (!file_exists("/tmp/easyWebCharts")) mkdir("/tmp/easyWebCharts", 0777);
 file_put_contents ("/tmp/easyWebCharts/easyWebChart.jpg", "dummy");
 chmod("/tmp/easyWebCharts/easyWebChart.jpg",0666);
@@ -85,11 +87,12 @@ while ($doWork == TRUE) {
 	$dateTime = date("Ymd_Hi",$time);
 	$hourOfDay = date("H",$time);
 
+/*
 	$reply = shell_exec("sudo $path/dht22/easydht");
 	$valueTable = explode("\n", trim($reply,"\n"));
 	echo "valueTable: "; print_r($valueTable); echo "\n";	
 
-	if (count($valueTable) == 8) {
+	if (count($valueTable) >= 8) {
 	
 		$valuesOK = TRUE;
 	    for($i = 0; $i < 8; $i++) {
@@ -104,7 +107,7 @@ while ($doWork == TRUE) {
 			echo("INSERT INTO $tableName_lm VALUES($time, $Abluft, $Zuluft, $Fortluft, $Aussenluft, $AbluftRH, $ZuluftRH, $FortluftRH, $AussenluftRH)") . "\n";
 			mysql_query("INSERT INTO $tableName_lm VALUES($time, $Abluft, $Zuluft, $Fortluft, $Aussenluft, $AbluftRH, $ZuluftRH, $FortluftRH, $AussenluftRH)");
 		}
-	}
+	} */
 			
 	mysql_query("DELETE FROM $tableName_lm WHERE timeStamp <= " . ($time-60));
 	mysql_query("DELETE FROM $tableName_lm WHERE timeStamp > " . ($time));
@@ -159,7 +162,7 @@ while ($doWork == TRUE) {
 		mysql_query("UPDATE $tableName_av SET timeStamp = " . time() . ", hourOfDay = $hourOfDay, dateTime = '$dateTime', Abluft = $Abluft_C, Zuluft = $Zuluft_C, Fortluft = $Fortluft_C, Aussenluft = $Aussenluft_C, " . 
 					"AbluftRH = $AbluftRH_C, ZuluftRH = $ZuluftRH_C, FortluftRH = $FortluftRH_C, AussenluftRH = $AussenluftRH_C, Wirkungsgrad = $WirkungsgradZuluft " . 
 		            "WHERE actualValue = 1");
-		echo "mysql_affected_rows(): " . mysql_affected_rows() . "\r\n";
+		//echo "mysql_affected_rows(): " . mysql_affected_rows() . "\r\n";
 		
 		//if (mysql_affected_rows() != 1)		// create record if it does not exist
 			//echo ("INSERT INTO $tableName_av (actualValue, dateTime, Abluft, Zuluft, Fortluft, Aussenluft, AbluftRH, ZuluftRH, FortluftRH, AussenluftRH, Wirkungsgrad) " .
@@ -224,16 +227,16 @@ while ($doWork == TRUE) {
 				$copyDailyChartTime = strtotime("+1 day", $copyDailyChartTime);
 				$rslt = mysql_query("SELECT * FROM $tableName_chartOpt WHERE chartOpt = 1");
 				$chartOpt = mysql_fetch_assoc($rslt);	
-				makeChart("easyLüfter", "$path/easyWebCharts/archiv", 4, $chartOpt['YScale'], $chartOpt['tempOffset'], date("d.m.Y 20:00"), date("_Ymd_2000") ); 		
+				makeChart("easyLÃ¼fter", "$path/easyWebCharts/archiv", 4, $chartOpt['YScale'], $chartOpt['tempOffset'], date("d.m.Y 20:00"), date("_Ymd_2000") ); 		
 			}
 
-			//copy Chart to server (optional)
+			//copy Chart to bananapi
 			if (function_exists("copyChartToServer")) {			
 				if ($cpToServerTime <= time()) {
 					$cpToServerTime = time() + 10*60;
 					$rslt = mysql_query("SELECT * FROM $tableName_chartOpt WHERE chartOpt = 1");
 					$chartOpt = mysql_fetch_assoc($rslt);	
-					makeChart("easyüfter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
+					makeChart("easyLÃ¼fter", "/tmp/easyWebCharts", $chartOpt['XScale'], $chartOpt['YScale'], $chartOpt['tempOffset'], "actualMinute"); 		
 					copyChartToServer();
 				}
 			}

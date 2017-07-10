@@ -150,7 +150,6 @@ $loopInterval = 5;	// 5 secs
 
 $time = time();
 $Ddelta1 = 0;
-$deltaL = 0;
 $State = $Idelta = 0;
 $WrSoll = wrSollCalc($totSpeed);
 $wrSollCalcTime = time();
@@ -227,7 +226,8 @@ while ($doWork == TRUE) {
 			if ($echo) echo sprintf("WrSoll: %.3f", $WrSoll);
 
 			// delta
-			$delta = $deltaL = $WrIst - $WrSoll;
+			//$delta = $deltaL = $WrIst - $WrSoll;
+			$delta = $deltaL = ($WrIst - $WrSoll) * abs($mesures['Abluft'] - $mesures['Aussenluft'])/10;
 			if      ($deltaL >  0.03) $deltaL =  0.03;	// limitiere deltaL auf 3%
 			else if ($deltaL < -0.03) $deltaL = -0.03;
 			if ($echo) echo sprintf(" --> delta: %f  deltaL: %f\n", $delta, $deltaL);			

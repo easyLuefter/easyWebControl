@@ -9,10 +9,6 @@ $tableName_tmr = "easy_tmr1";
 $tableName_vars = "easy_vars1";
 $tableName_chartOpt = "easy_chartOpt1";
 $tableName_fanControl = "easy_fanControl1";
-
-$ftp_server1="login-118.hoststar.ch";
-$ftp_user_name1="easyControlPi.easyluefter.ch";
-$ftp_user_pass1="Easy%111";
 		
 $tText 				= array("Abluft: ","Zuluft: ","Fortl.: ","Aussenl:");
 $DoWIntervals 		= array("MO-SO","MO-FR","SA-SO","MO   ","DI   ","MI   ","DO   ","FR   ","SA   ","SO   ");
