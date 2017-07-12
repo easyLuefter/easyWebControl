@@ -149,8 +149,12 @@ function createAndInitTables() {
 	  `leistungAbluft` int(10) NOT NULL DEFAULT 0,
 	  `waermeRueckgew` int(11) NOT NULL DEFAULT 0,
 	  `AbluftRH` int(11) NOT NULL DEFAULT 0,
+	  `ZuluftRH` int(11) NOT NULL DEFAULT 0,
+	  `FortluftRH` int(11) NOT NULL DEFAULT 0,
 	  `AussenluftRH` int(11) NOT NULL DEFAULT 0,
 	  `AbluftAH` int(11) NOT NULL DEFAULT 0,
+	  `ZuluftAH` int(11) NOT NULL DEFAULT 0,
+	  `FortluftAH` int(11) NOT NULL DEFAULT 0,
 	  `AussenluftAH` int(11) NOT NULL DEFAULT 0,
 	  `AS_AH` int(11) NOT NULL DEFAULT 0
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;';
@@ -190,8 +194,8 @@ function createAndInitTables() {
 	  `RHCal4` float NOT NULL DEFAULT 0,
 	  `sym` int(11) NOT NULL DEFAULT 1,
 	  `uSym` int(11) NOT NULL DEFAULT 0,
-	  `Pvalue` float NOT NULL DEFAULT 0.6,
-	  `Ivalue` float NOT NULL DEFAULT 0.4,
+	  `Pvalue` float NOT NULL DEFAULT 1,
+	  `Ivalue` float NOT NULL DEFAULT 1,
 	  `Dvalue` float NOT NULL DEFAULT 0,
 	  `timeConst` int(11) NOT NULL DEFAULT 420,
 	  `Icomponent` float NOT NULL DEFAULT 0

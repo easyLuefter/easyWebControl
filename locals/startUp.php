@@ -18,12 +18,17 @@ if (!flock($fp, LOCK_EX | LOCK_NB)) {
     exit;
 } else echo "$PHPname not locked\n";
 
+	sleep(6);
 	echo shell_exec("sudo pigpiod");
-	echo shell_exec("$path/../dht22/easydht 0 >/dev/null 2>&1 &");
 	//echo shell_exec("sudo pigs hp 12 23000 200000");
 	//echo shell_exec("sudo pigs hp 13 23000 200000");
-	echo shell_exec("php $path/../getHumTmp.php d >/dev/null 2>&1 &");
+	sleep(30);
+	echo shell_exec("php $path/../getHumTmp.php >/dev/null 2>&1 &");
+	sleep(10);
+	//echo shell_exec("$path/../dht22/easydht 0 >/dev/null 2>&1 &");
 	echo shell_exec("php $path/../regler.php d >/dev/null 2>&1 &");
 	echo shell_exec("php $path/../humTemp.php d >/dev/null 2>&1 &");
+	sleep(10);
+	echo shell_exec("sudo $path/../dht22/easydht 0 >/dev/null 2>&1 &");
 	
 ?>
