@@ -43,87 +43,6 @@ include "locals/mySqlConnect.php";
 include "const.php";
 include "easyLib.php";
 
-$fileName = "easyKonfiguration_" . date("Ymd_Hi") . ".txt";  // filename for config export/import
-
-/*
-// import Konfiguration
-if (isset($_FILES["fileToUpload"])) {
-	$tmrNr = 0;
-	$target_dir = "import/";
-	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-	$uploadOk = 1;
-	$FileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-	$msg = ""; 
-	if ($_FILES["fileToUpload"]["size"] > 10000) {
-	    $msg .= "File ist zu gross<br />";
-	    $uploadOk = 0;
-	 }
-	// Allow certain file formats
-	if ($FileType != "txt" ) {
-	    $msg .= "'$FileType' kein gültiges Konfigurations-File<br />";
-	    $uploadOk = 0;
-	}
-	// Check if $uploadOk is set to 0 by an error
-	if ($uploadOk == 1) {   // if everything is ok, try to upload file
-		$target_file = $target_dir . "easyKonfiguration.txt";
-	    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-			$myfile = fopen($target_file, "r") or die("Unable to open file '$target_file'!");
-			$line = trim(fgets($myfile)," \r\n");
-			if (strpos($line,"easyKonfiguration")) {
-		        while((!strpos( $line = trim(fgets($myfile)," \r\n") , "interfaces.txt:") ) && (!feof($myfile))) {
-					if ($pos = strpos($line," ")) {
-						$key = substr($line,0,$pos);
-						$value = substr($line,$pos+1);
-						if      ($key == "config") {$tableName = $tableName_config; $rowName = "config"; $rowNr = "1";}
-						else if ($key == "hum")    {$tableName = $tableName_hum;    $rowName = "hum";    $rowNr = "1";}
-						else if ($key == "tmrNr")  {$tableName = $tableName_tmr;    $rowName = "tmrNr";  $rowNr = $value;}
-						else {
-							mysql_query("UPDATE $tableName SET $key='$value' WHERE $rowName = $rowNr");
-							//echo ("UPDATE $tableName SET $key='$value' WHERE $rowName = $rowNr") . "<br />";
-						}
-					}
-		        }
-		        //echo "line: $line<br />";
-	        	if (strpos($line,"interfaces.txt:")) {
-					$wFile = fopen("network/interfaces.txt","w") or die("Unable to open file 'network/interfaces.txt'!");
-	        		while ((!strpos($line = str_replace("\r", '', fgets($myfile)),"hostapd.conf.txt:")) && (!feof($myfile))) fwrite($wFile, $line);
-	        		fclose($wFile);
-					$wFile = fopen("network/hostapd.conf.txt","w") or die("Unable to open file 'network/hostapd.conf.txt'!");
-	        		while ((!strpos($line = str_replace("\r", '', fgets($myfile)),"interfaces_ap.txt:")) && (!feof($myfile))) fwrite($wFile, $line);
-	        		fclose($wFile);
-					$wFile = fopen("network/interfaces_ap.txt","w") or die("Unable to open file 'network/interfaces_ap.txt'!");
-	        		while (($line = str_replace("\r", '', fgets($myfile))) && (!feof($myfile))) fwrite($wFile, $line);
-	        		fclose($wFile);
-	        	}
-				$msg .= "Konfiguration 2 wurde wiederhergestellt";
-			} else $msg .= "ungültiges Konfiguration Format<br />";
-			fclose($myfile);
-	    } else $msg .= "Fehler beim Transfer der Konfigurations-Datei";
-	} else $msg .= "Konfiguration wurde nicht wiederhergestellt<br />";
-}
-
-*/
-
-/*
-	$read = doReadSerial($serial);
-	if ($debug) echo 'read: ' . $read . '<br />';
-	$valueTable = explode("\n", $read);
-	if ($debug) {echo "valueTable: "; print_r($valueTable); echo "<br />";}
-	
-	for($i = 1; $i < count($valueTable)-1; $i++) {
-		$ValueEntry = explode(' ', $valueTable[$i]);
-		if (isset($ValueEntry[1])) $ValueArray[$ValueEntry[0]] = $ValueEntry[1];
-	}
-
-	if ($debug) {echo "ValueArray: "; print_r($ValueArray); echo "<br />";}
-
-	//write config data to file (for config export)
-	$myfile = fopen("export/" . $fileName, "w") or die("Unable to open file '$fileName'!");
-	fwrite($myfile, "easyKonfiguration2\r\n");
-	foreach ($ValueArray as $key => $value) {
-	    fwrite($myfile, "$key $value\r\n");
-	}
-	fclose($myfile); */
 
 if (count($_POST) > 0) {
 	if (isset($_POST['button'])) {
@@ -148,29 +67,12 @@ if (count($_POST) > 0) {
 			mysql_query("UPDATE $tableName_config SET tempCal1=$tempCal1, tempCal2=$tempCal2, tempCal3=$tempCal3, tempCal4=$tempCal4, " . 
 													 "RHCal1=$RHCal1, RHCal2=$RHCal2, RHCal3=$RHCal3, RHCal4=$RHCal4 WHERE config = 1");
 		} else if ($_POST['button'] == "update") {
-			$message = "";
-			if ($conn_id = ftp_connect($ftp_server1)) {
-				if (ftp_login($conn_id, $ftp_user_name1, $ftp_user_pass1)) {
-					if (ftp_get($conn_id, "test.test", "proc/main.php", FTP_BINARY)) {
-						//echo "file download OK\n";
-						ftp_sync($conn_id, "proc");
-						exec("cp proc/* .");
-						exec("rm test.test");
-					} else {
-						echo "file download nicht möglich\n";
-					}
-				} else {
-					$message.= date("d.m.Y H:i:s") . " ftp_login() failed\n";
-				}
-				ftp_close($conn_id);			
-			} else {
-				$message.= date("d.m.Y H:i:s") . " ftp_connect($ftp_server1) failed\n";
-			}
-		} else if ($_POST['button'] == "update2") {
 			exec("rm -fr easyControlPi");
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
 			exec("cp easyControlPi/* .");
 			exec("cp -r easyControlPi/dht22 .");
+		} else if ($_POST['button'] == "reboot") {
+			exec("sudo reboot");
 		}
 	} else if (isset($_POST['conf'])) {
 		$lLimit = -10;
@@ -197,45 +99,15 @@ if (count($_POST) > 0) {
 	}
 }
 
-// fetch values from database
-$res = mysql_query("SELECT * FROM $tableName_config");
-$config = mysql_fetch_assoc($res);
-$res = mysql_query("SELECT * FROM $tableName_hum");
-$hum = mysql_fetch_assoc($res);
-$res = mysql_query("SELECT * FROM $tableName_vars");
-$vars = mysql_fetch_assoc($res);
-$res = mysql_query("SELECT * FROM $tableName_fanControl");
-$fanControl = mysql_fetch_assoc($res);
-
-/*
-// prepare file for save config
-exec ("rm export/*");
-$myfile = fopen("export/" . $fileName, "w") or die("Unable to open file '$fileName'!");
-fwrite($myfile, "easyKonfiguration\r\n");
-foreach ($config as $key => $value) fwrite($myfile, "$key $value\r\n");
-foreach ($hum    as $key => $value) fwrite($myfile, "$key $value\r\n");
-$res = mysql_query("SELECT * FROM $tableName_tmr WHERE tmrNr < 20");
-while ($tmr = mysql_fetch_assoc($res)) {
-	foreach ($tmr    as $key => $value) fwrite($myfile, "$key $value\r\n");
-}
-// interfaces.txt
-fwrite($myfile, "#interfaces.txt:\r\n");
-$nwFile = fopen("network/interfaces.txt","r") or die("Unable to open file 'network/interfaces.txt'!");
-while(!feof($nwFile)) fwrite($myfile, trim(fgets($nwFile)," \r\n") . "\r\n");
-fclose($nwFile);
-fwrite($myfile, "#hostapd.conf.txt:\r\n");
-// hostapd.conf.txt
-$nwFile = fopen("network/hostapd.conf.txt","r") or die("Unable to open file 'network/hostapd.conf.txt'!");
-while(!feof($nwFile))  fwrite($myfile, trim(fgets($nwFile)," \r\n") . "\r\n");
-fclose($nwFile);
-fwrite($myfile, "#interfaces_ap.txt:\r\n");
-// interfaces_ap.txt
-$nwFile = fopen("network/interfaces_ap.txt","r") or die("Unable to open file 'network/interfaces_ap.txt'!");
-while(!feof($nwFile)) fwrite($myfile, trim(fgets($nwFile)," \r\n") . "\r\n");
-fclose($nwFile);
-fclose($myfile); 
-*/
-
+	// fetch values from database
+	$res = mysql_query("SELECT * FROM $tableName_config");
+	$config = mysql_fetch_assoc($res);
+	$res = mysql_query("SELECT * FROM $tableName_hum");
+	$hum = mysql_fetch_assoc($res);
+	$res = mysql_query("SELECT * FROM $tableName_vars");
+	$vars = mysql_fetch_assoc($res);
+	$res = mysql_query("SELECT * FROM $tableName_fanControl");
+	$fanControl = mysql_fetch_assoc($res);
 
 	echo '<h3>Konfiguration 2 (Klimafunktionen)</h3>
 	<table>';
@@ -783,11 +655,17 @@ fclose($myfile);
 	
 	
 	echo '
-	<tr><td></td><td><br />
-		<form action="config2.php" method="post">
-			<button type="submit" name="button" value="update2">Software update</button>		
-		</form>
-	</td></tr>';
+	<tr><td></td>
+		<td><br />
+			<form action="config2.php" method="post">
+				<button type="submit" name="button" value="update">Software update</button>		
+			</form>
+		<td><br />
+			<form action="config2.php" method="post">
+				<button type="submit" name="button" value="reboot">System Neustart</button>		
+			</form>
+		</td>
+	</tr>';
 
 
 

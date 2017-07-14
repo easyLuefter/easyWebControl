@@ -201,13 +201,9 @@ for ($i = 1; $i <= 6; $i++) {
 echo '
 </table>';
 
-//echo '
-//<p><a href="main.php">Startseite</a>&nbsp;&nbsp;<a href="mesures.php">Messwerte</a>&nbsp;&nbsp;<a href="config2.php">Konfiguration 2</a></p>
-//<p><a href="nwSetup.php">Netzwerk Konfiguration</a></p>
-//';
 echo '
 <p><a href="main.php">Startseite</a>&nbsp;&nbsp;<a href="mesures.php">Messwerte</a>&nbsp;&nbsp;<a href="config2.php">Konfiguration 2</a></p>
-';
+<p><a href="nwSetup.php">Netzwerk Konfiguration</a></p>';
 
 ?>
 </body>
