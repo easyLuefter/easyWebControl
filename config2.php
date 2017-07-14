@@ -70,7 +70,7 @@ if (count($_POST) > 0) {
 			exec("rm -fr easyControlPi");
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
 			exec("cp easyControlPi/* .");
-			exec("cp -r easyControlPi/dht22 .");
+			exec("cp easyControlPi/dht22/easydht dht22/easydht_new");
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		}

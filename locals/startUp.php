@@ -29,6 +29,7 @@ if (!flock($fp, LOCK_EX | LOCK_NB)) {
 	echo shell_exec("php $path/../regler.php d >/dev/null 2>&1 &");
 	echo shell_exec("php $path/../humTemp.php d >/dev/null 2>&1 &");
 	sleep(10);
+	echo shell_exec("sudo cp $path/../dht22/easydht_new $path/../dht22/easydht");
 	echo shell_exec("sudo $path/../dht22/easydht 0 >/dev/null 2>&1 &");
 	
 ?>
