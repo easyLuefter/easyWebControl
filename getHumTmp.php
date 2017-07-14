@@ -63,7 +63,7 @@ echo date("d.m.Y H:i:s") . " $PHPname started\n";
 // prepare tmp/easyWebCharts directory and easyWebChart.jpg file with read/write access to all
 $old_umask = umask(0);
 if (!file_exists("easyWebCharts")) mkdir("easyWebCharts", 0777);
-if (!file_exists("easyWebCharts/archive")) mkdir("easyWebCharts/archive", 0777);
+if (!file_exists("easyWebCharts/archiv")) mkdir("easyWebCharts/archiv", 0777);
 if (!file_exists("/tmp/easyWebCharts")) mkdir("/tmp/easyWebCharts", 0777);
 file_put_contents ("/tmp/easyWebCharts/easyWebChart.jpg", "dummy");
 chmod("/tmp/easyWebCharts/easyWebChart.jpg",0666);
