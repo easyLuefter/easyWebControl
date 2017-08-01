@@ -73,6 +73,15 @@ if (count($_POST) > 0) {
 			exec("cp easyControlPi/dht22/easydht dht22/easydht_new");
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
+		} else if ($_POST['button'] == "factoryReset") {
+			exec("rm -fr easyControlPi");
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
+			exec("cp easyControlPi/* .");
+			exec("cp easyControlPi/locals/* locals");
+			exec("cp easyControlPi/dht22/easydht dht22/easydht_new");
+			exec("rm -fr easyWebCharts");
+			mysql_query("DROP DATABASE easyLuefter");
+			exec("sudo reboot");
 		}
 	} else if (isset($_POST['conf'])) {
 		$lLimit = -10;
@@ -663,6 +672,10 @@ if (count($_POST) > 0) {
 		<td><br />
 			<form action="config2.php" method="post">
 				<button type="submit" name="button" value="reboot">System Neustart</button>		
+			</form>
+		<td><br />
+			<form action="config2.php" method="post">
+				<button type="submit" name="button" value="factoryReset">System reset</button>		
 			</form>
 		</td>
 	</tr>';

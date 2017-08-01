@@ -1,3 +1,4 @@
 <?php
+$procPath = "/mnt/proc";
 
 ?>
