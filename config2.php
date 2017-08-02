@@ -74,14 +74,26 @@ if (count($_POST) > 0) {
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		} else if ($_POST['button'] == "factoryReset") {
-			exec("rm -fr easyControlPi");
-			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
-			exec("cp easyControlPi/* .");
-			exec("cp easyControlPi/locals/* locals");
-			exec("cp easyControlPi/dht22/easydht dht22/easydht_new");
-			exec("rm -fr easyWebCharts");
-			mysql_query("DROP DATABASE easyLuefter");
-			exec("sudo reboot");
+			exec("sudo rm -fr *");
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git $procPath/easyWebControl");
+			exec("cp -r $procPath/easyWebControl/* $procPath");
+			exec("sudo chmod 777 $procPath/dht22/easydht");
+			
+			exec("sudo cp $procPath/confinit/interfaces /etc/network");
+			exec("sudo cp $procPath/confinit/hostname /etc");
+			exec("sudo cp $procPath/confinit/hosts /etc");
+			exec("sudo cp $procPath/confinit/rc.local /etc");
+			exec("sudo cp $procPath/confinit/hostapd.conf /etc/hostapd");
+			exec("sudo cp $procPath/confinit/udhcpd.conf /etc");
+			
+			//mysql_query("DROP DATABASE easyLuefter");
+			exec("sudo service mysql stop");
+			exec("sudo rm -R $dataPath/mysql");
+			exec("sudo cp -R -p /var/lib/mysql $dataPath");
+
+			echo exec(" sudo echo pi:easy0001 | sudo chpasswd");			
+
+			echo exec("sudo reboot");
 		}
 	} else if (isset($_POST['conf'])) {
 		$lLimit = -10;
@@ -675,7 +687,7 @@ if (count($_POST) > 0) {
 			</form>
 		<td><br />
 			<form action="config2.php" method="post">
-				<button type="submit" name="button" value="factoryReset">System reset</button>		
+				<button type="submit" name="button" value="factoryReset">Factory Reset</button>		
 			</form>
 		</td>
 	</tr>';
