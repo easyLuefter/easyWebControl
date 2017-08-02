@@ -74,10 +74,15 @@ if (count($_POST) > 0) {
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		} else if ($_POST['button'] == "factoryReset") {
-			exec("sudo rm -fr *");
+			exec("sudo rm -fr $procPath/easyWebControl");
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git $procPath/easyWebControl");
-			exec("cp -r $procPath/easyWebControl/* $procPath");
-			exec("sudo chmod 777 $procPath/dht22/easydht");
+			if (file_exists("$procPath/easyWebControl")) {
+				exec("sudo rm -fr $procPath/*");
+				exec("cp -r $procPath/easyWebControl/* $procPath");
+				exec("sudo chmod 777 $procPath/dht22/easydht");
+			} else {			
+				exec("sudo rm -fr $procPath/easyWebCharts");
+			}
 			
 			exec("sudo cp $procPath/confinit/interfaces /etc/network");
 			exec("sudo cp $procPath/confinit/hostname /etc");
