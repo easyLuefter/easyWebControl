@@ -43,6 +43,10 @@ include "locals/mySqlConnect.php";
 include "const.php";
 include "easyLib.php";
 
+if (!isset($procPath)) $procPath = "/mnt/proc";
+if (!isset($dataPath)) $dataPath = "/mnt/data";
+
+
 
 if (count($_POST) > 0) {
 	if (isset($_POST['button'])) {
@@ -69,7 +73,7 @@ if (count($_POST) > 0) {
 		} else if ($_POST['button'] == "update") {
 			exec("rm -fr /tmp/easyWebControl");
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git /tmp/easyWebControl");
-			exec("cp /tmp/easyWebControl/* .");
+			exec("cp /tmp/easyWebControl/* $procPath");
 			exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
@@ -79,12 +83,12 @@ if (count($_POST) > 0) {
 			if (file_exists("/tmp/easyWebControl")) {
 				exec("sudo rm -fr $procPath/*");
 				exec("cp -r /tmp/easyWebControl/* $procPath");
-				exec("sudo chmod -R 777 $procPath/*");				
+				exec("sudo chmod -R 777 $procPath/*");
 				exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
-			} else {			
+			} else {
 				exec("sudo rm -fr $procPath/easyWebCharts");
 			}
-			
+
 			exec("sudo cp $procPath/confinit/interfaces /etc/network");
 			exec("sudo cp $procPath/confinit/hostname /etc");
 			exec("sudo cp $procPath/confinit/hosts /etc");
