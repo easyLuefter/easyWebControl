@@ -67,19 +67,20 @@ if (count($_POST) > 0) {
 			mysql_query("UPDATE $tableName_config SET tempCal1=$tempCal1, tempCal2=$tempCal2, tempCal3=$tempCal3, tempCal4=$tempCal4, " . 
 													 "RHCal1=$RHCal1, RHCal2=$RHCal2, RHCal3=$RHCal3, RHCal4=$RHCal4 WHERE config = 1");
 		} else if ($_POST['button'] == "update") {
-			exec("rm -fr easyControlPi");
-			exec("git clone https://github.com/easyLuefter/easyWebControl.git easyControlPi");
-			exec("cp easyControlPi/* .");
-			exec("cp easyControlPi/dht22/easydht dht22/easydht_new");
+			exec("rm -fr /tmp/easyWebControl");
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git /tmp/easyWebControl");
+			exec("cp /tmp/easyWebControl/* .");
+			exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		} else if ($_POST['button'] == "factoryReset") {
-			exec("sudo rm -fr $procPath/easyWebControl");
-			exec("git clone https://github.com/easyLuefter/easyWebControl.git $procPath/easyWebControl");
-			if (file_exists("$procPath/easyWebControl")) {
+			exec("sudo rm -fr /tmp/easyWebControl");
+			exec("git clone https://github.com/easyLuefter/easyWebControl.git /tmp/easyWebControl");
+			if (file_exists("/tmp/easyWebControl")) {
 				exec("sudo rm -fr $procPath/*");
-				exec("cp -r $procPath/easyWebControl/* $procPath");
-				exec("sudo chmod 777 $procPath/dht22/easydht");
+				exec("cp -r /tmp/easyWebControl/* $procPath");
+				exec("sudo chmod -R 777 $procPath/*");				
+				exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
 			} else {			
 				exec("sudo rm -fr $procPath/easyWebCharts");
 			}
