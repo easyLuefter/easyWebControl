@@ -103,8 +103,16 @@ if ($config['SWversion'] < 1.008)  {
 if ($config['SWversion'] < 1.009)  {
 	mysql_query("ALTER TABLE `$tableName_config` DROP `DIvalue`");
 	echo exec("sudo chmod -R 777 locals");
-	echo exec("cp -r easyControlPi/locals/startUp.php locals");
+	echo exec("cp -r /tmp/easyWebControl/locals/startUp.php $procPath/locals");
 	mysql_query("UPDATE `easyLuefter`.`$tableName_config` SET `SWversion` = '1.009' WHERE `$tableName_config`.`config` = 1");
+	$res = mysql_query("SELECT * FROM $tableName_config");
+	$config = mysql_fetch_assoc($res);
+}
+
+if ($config['SWversion'] < 1.010)  {
+	echo exec("cp -r /tmp/easyWebControl/locals/startUp.php $procPath/locals");
+	echo exec("cp -r /tmp/easyWebControl/locals/locals.php $procPath/locals");
+	mysql_query("UPDATE `easyLuefter`.`$tableName_config` SET `SWversion` = '1.010' WHERE `$tableName_config`.`config` = 1");
 	$res = mysql_query("SELECT * FROM $tableName_config");
 	$config = mysql_fetch_assoc($res);
 }

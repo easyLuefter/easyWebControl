@@ -10,6 +10,18 @@ function sicher() {
 	var chk = window.confirm("sind Sie sicher?");
 	return(chk);
 }
+function softwareUpdateSicher() {
+	var chk = window.confirm("Software Update - Netzwerkverbindung erforderlich");
+	return(chk);
+}
+function systemNeustartSicher() {
+	var chk = window.confirm("das System wird neu gestartet - Dauer: ca. 2 Minuten");
+	return(chk);
+}
+function factoryResetSicher() {
+	var chk = window.confirm("alle Daten werden auf die ursprünglichen Werte zurügesetzt");
+	return(chk);
+}
 </script>
 
 <style type="text/css">
@@ -75,6 +87,7 @@ if (count($_POST) > 0) {
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git /tmp/easyWebControl");
 			exec("cp /tmp/easyWebControl/* $procPath");
 			exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
+			exec("php $procPath/versionControl.php");
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		} else if ($_POST['button'] == "factoryReset") {
@@ -688,15 +701,15 @@ if (count($_POST) > 0) {
 	echo '
 	<tr><td></td>
 		<td><br />
-			<form action="config2.php" method="post">
-				<button type="submit" name="button" value="update">Software update</button>		
+			<form action="config2.php" method="post" onSubmit="return softwareUpdateSicher()">
+				<button type="submit" name="button" value="update">Software Update</button>		
 			</form>
 		<td><br />
-			<form action="config2.php" method="post">
+			<form action="config2.php" method="post" onSubmit="return systemNeustartSicher()">
 				<button type="submit" name="button" value="reboot">System Neustart</button>		
 			</form>
 		<td><br />
-			<form action="config2.php" method="post">
+			<form action="config2.php" method="post" onSubmit="return factoryResetSicher()">
 				<button type="submit" name="button" value="factoryReset">Factory Reset</button>		
 			</form>
 		</td>
