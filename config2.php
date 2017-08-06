@@ -87,7 +87,7 @@ if (count($_POST) > 0) {
 			exec("git clone https://github.com/easyLuefter/easyWebControl.git /tmp/easyWebControl");
 			exec("cp /tmp/easyWebControl/* $procPath");
 			exec("cp /tmp/easyWebControl/dht22/easydht $procPath/dht22/easydht_new");
-			exec("php $procPath/versionControl.php");
+			include "versionControl.php";
 		} else if ($_POST['button'] == "reboot") {
 			exec("sudo reboot");
 		} else if ($_POST['button'] == "factoryReset") {
