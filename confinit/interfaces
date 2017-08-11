@@ -20,9 +20,8 @@ address 192.168.1.16
 netmask 255.255.255.0
 gateway 192.168.1.1
 dns-nameservers 192.168.1.1
-#wpa-ssid "Kolaetz-24G"
-wpa-ssid "Vietnamsika 24G"
-wpa-psk "Speedy01"
+wpa-ssid "MYSSID"
+wpa-psk "MYPSK"
 
 # ap mode
 auto wlan1
